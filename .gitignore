@@ -29,10 +29,7 @@ target
 
 # Config
 configuration.properties
+database.properties
 
 # DB
 *.db
-
-# Heroku
-Procfile
-

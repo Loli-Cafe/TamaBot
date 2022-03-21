@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import uwu.narumi.tama.Tama;
 
 import java.util.List;
 
@@ -55,6 +56,16 @@ public abstract class Command {
         }
 
         return false;
+    }
+
+    public void handleException(MessageReceivedEvent event, RuntimeException exception) {
+        Tama.INSTANCE.getCommandManager().handleException(event, exception);
+        throw exception;
+    }
+
+    public void handleException(SlashCommandInteractionEvent event, RuntimeException exception) {
+        Tama.INSTANCE.getCommandManager().handleException(event, exception);
+        throw exception;
     }
 
     public boolean matchArgsLength(String text) {

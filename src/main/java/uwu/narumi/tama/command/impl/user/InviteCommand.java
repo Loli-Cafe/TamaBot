@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import uwu.narumi.tama.command.Command;
 import uwu.narumi.tama.command.CommandInfo;
 import uwu.narumi.tama.command.CommandType;
-import uwu.narumi.tama.helper.EmbedHelper;
+import uwu.narumi.tama.helper.discord.EmbedHelper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +29,7 @@ public class InviteCommand extends Command {
 
     @Override
     public void compose(SlashCommandInteractionEvent event) {
-        event.replyEmbeds(execute(event.getUser())).queue();
+        event.replyEmbeds(execute(event.getUser())).complete().deleteOriginal().completeAfter(15, TimeUnit.SECONDS);
     }
 
     @Override
@@ -39,6 +39,6 @@ public class InviteCommand extends Command {
 
     @Override
     public MessageEmbed execute(Object... args) {
-        return EmbedHelper.invite((User) args[0]);
+        return EmbedHelper.invite((User) args[0], "https://i-want-to-fuck-anime-girls.club/u/uRNAZEGo");
     }
 }

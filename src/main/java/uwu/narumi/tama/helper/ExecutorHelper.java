@@ -1,12 +1,16 @@
 package uwu.narumi.tama.helper;
 
+import uwu.narumi.tama.Tama;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
 public final class ExecutorHelper {
 
-    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(4);
+    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(
+            Integer.parseInt(Tama.INSTANCE.getProperties().getProperty("discord.bot.worker.threads"))
+    );
 
     private ExecutorHelper() {
     }

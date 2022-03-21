@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 
 public enum CommandType {
 
-    ANIME, USER, MODERATOR, ADMIN; //in future
+    ANIME, USER, NSFW, MODERATOR, ADMIN; //in future
 
     public boolean canInvoke(Member member) {
         switch (this) {
@@ -13,6 +13,8 @@ public enum CommandType {
                 return member.hasPermission(Permission.MESSAGE_MANAGE);
             case ADMIN:
                 return member.hasPermission(Permission.ADMINISTRATOR);
+            //case NSFW:
+            //    return true;
             // case ANIME:
             //     return member.getRoles().contains();
             default:

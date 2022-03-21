@@ -12,7 +12,7 @@ import uwu.narumi.tama.Tama;
 import uwu.narumi.tama.command.Command;
 import uwu.narumi.tama.command.CommandInfo;
 import uwu.narumi.tama.command.CommandType;
-import uwu.narumi.tama.helper.EmbedHelper;
+import uwu.narumi.tama.helper.discord.EmbedHelper;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
         alias = "help",
         description = "Commands",
         usage = "/help [command]",
-        type = CommandType.USER,
-        aliases = "commands"
+        type = CommandType.USER
 )
 public class HelpCommand extends Command {
 
@@ -35,13 +34,14 @@ public class HelpCommand extends Command {
 
     @Override
     public void compose(MessageReceivedEvent event, String... args) {
-        event.getTextChannel().sendMessageEmbeds(execute(event.getAuthor(), args.length > 0 ? args[0] : null)).complete().delete().completeAfter(30, TimeUnit.SECONDS);
+        event.getAuthor().openPrivateChannel().complete().sendMessageEmbeds(execute(event.getAuthor(), args.length > 0 ? args[0] : null)).complete().delete().completeAfter(30, TimeUnit.SECONDS);
     }
 
     @Override
     public void compose(SlashCommandInteractionEvent event) {
         OptionMapping command = event.getOption("command");
-        event.replyEmbeds(execute(event.getUser(), command != null ? command.getAsString() : null)).queue();
+        event.getUser().openPrivateChannel().complete().sendMessageEmbeds(execute(event.getUser(), command != null ? command.getAsString() : null)).complete().delete().completeAfter(30, TimeUnit.SECONDS);
+        event.deferReply().queue();
     }
 
     @Override

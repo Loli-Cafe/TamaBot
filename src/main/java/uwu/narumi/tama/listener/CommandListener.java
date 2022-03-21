@@ -7,17 +7,23 @@ import org.jetbrains.annotations.NotNull;
 import uwu.narumi.tama.Tama;
 import uwu.narumi.tama.helper.ExecutorHelper;
 
+import java.util.Objects;
+
 
 public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getAuthor().isBot() || !event.getMessage().getContentDisplay().startsWith(Tama.INSTANCE.getCommandManager().getPrefix()))
+        if (event.isWebhookMessage() || event.getAuthor().isBot())
             return;
 
-        ExecutorHelper.execute(() -> {
-            Tama.INSTANCE.getCommandManager().handle(event);
-            event.getMessage().delete().complete();
+        Tama.INSTANCE.getGuildManager().findGuild(Objects.requireNonNull(event.getGuild()).getId()).thenAccept(guild -> {
+            if (event.getMessage().getContentDisplay().startsWith(guild.getPrefix()) && (guild.getWhitelistedCommandsChannels().isEmpty() || guild.getWhitelistedProxyChannels().contains(event.getTextChannel().getId()))) {
+                ExecutorHelper.execute(() -> {
+                    Tama.INSTANCE.getCommandManager().handle(guild.getPrefix(), event);
+                    event.getMessage().delete().complete();
+                });
+            }
         });
     }
 
