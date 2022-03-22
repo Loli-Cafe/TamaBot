@@ -24,7 +24,7 @@ import uwu.narumi.tama.helper.discord.EmbedHelper;
 )
 public class SpankCommand extends Command implements NekosLifeGrabber {
 
-    private static final String URL = "https://img1.gelbooru.com//images/19/10/1910500f35cdc9d390b7866a8199076c.gif";
+    //private static final String URL = "https://img1.gelbooru.com//images/19/10/1910500f35cdc9d390b7866a8199076c.gif";
 
     public SpankCommand() {
         super(
@@ -56,15 +56,20 @@ public class SpankCommand extends Command implements NekosLifeGrabber {
 
     @Override
     public boolean checkContext(Member member, TextChannel textChannel) {
-        if (!textChannel.isNSFW())
-            throw new CommandException("Channel isn't marked as NSFW");
+        //if (!textChannel.isNSFW())
+        //    throw new CommandException("Channel isn't marked as NSFW");
 
         return true;
     }
 
-    @Override
+    /*@Override
     public MessageEmbed execute(Object... args) {
         return EmbedHelper.action((String) args[0], URL);
+    }*/
+
+    @Override
+    public MessageEmbed execute(Object... args) {
+        return EmbedHelper.action((String) args[0], fetchImage("spank").orElseThrow(() -> new CommandException("Something went wrong")));
     }
 }
 

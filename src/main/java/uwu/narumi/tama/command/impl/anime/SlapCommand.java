@@ -1,4 +1,4 @@
-package uwu.narumi.tama.command.impl.nsfw.rp;
+package uwu.narumi.tama.command.impl.anime;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -24,7 +24,7 @@ import uwu.narumi.tama.helper.discord.EmbedHelper;
 )
 public class SlapCommand extends Command implements NekosLifeGrabber {
 
-    private static final String URL = "https://img3.gelbooru.com//images/b2/09/b209bf140ec675ec27294ad8b158477b.gif";
+    //private static final String URL = "https://img3.gelbooru.com//images/b2/09/b209bf140ec675ec27294ad8b158477b.gif";
 
     public SlapCommand() {
         super(
@@ -56,14 +56,19 @@ public class SlapCommand extends Command implements NekosLifeGrabber {
 
     @Override
     public boolean checkContext(Member member, TextChannel textChannel) {
-        if (!textChannel.isNSFW())
-            throw new CommandException("Channel isn't marked as NSFW");
+        //if (!textChannel.isNSFW())
+        //    throw new CommandException("Channel isn't marked as NSFW");
 
         return true;
     }
 
-    @Override
+    /*@Override
     public MessageEmbed execute(Object... args) {
         return EmbedHelper.action((String) args[0], URL);
+    }*/
+
+    @Override
+    public MessageEmbed execute(Object... args) {
+        return EmbedHelper.action((String) args[0], fetchImage("slap").orElseThrow(() -> new CommandException("Something went wrong")));
     }
 }
