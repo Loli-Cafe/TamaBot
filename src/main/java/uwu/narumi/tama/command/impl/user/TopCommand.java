@@ -32,7 +32,6 @@ public class TopCommand extends Command {
     public void compose(MessageReceivedEvent event, String... args) {
         forkJoinPool.execute(() -> {
             List<GuildUser> users = Tama.INSTANCE.getDataBase().fetchAll(event.getGuild().getId());
-            users.removeIf(guildUser -> event.getGuild().retrieveMemberById(guildUser.getId()).complete() == null);
             users.sort(Comparator.comparingInt(GuildUser::getGlobalExperience).reversed());
 
             if (users.isEmpty()) {
@@ -40,16 +39,14 @@ public class TopCommand extends Command {
                 return;
             }
 
-            event.getChannel().sendMessageEmbeds(EmbedHelper.levelTop(users, event.getAuthor(), event.getGuild(), 20)).queue();
+            event.getChannel().sendMessageEmbeds(EmbedHelper.levelTop(users, event.getAuthor(), 20)).queue();
         });
     }
 
     @Override
     public void compose(SlashCommandInteractionEvent event) {
-        event.reply("").queue();
         forkJoinPool.execute(() -> {
             List<GuildUser> users = Tama.INSTANCE.getDataBase().fetchAll(event.getGuild().getId());
-            users.removeIf(guildUser -> event.getGuild().retrieveMemberById(guildUser.getId()).complete() == null);
             users.sort(Comparator.comparingInt(GuildUser::getGlobalExperience).reversed());
 
             if (users.isEmpty()) {
@@ -57,7 +54,7 @@ public class TopCommand extends Command {
                 return;
             }
 
-            event.getChannel().sendMessageEmbeds(EmbedHelper.levelTop(users, event.getUser(), event.getGuild(), 20)).queue();
+            event.replyEmbeds(EmbedHelper.levelTop(users, event.getUser(), 20)).queue();
         });
     }
 

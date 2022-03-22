@@ -32,7 +32,7 @@ public class DatabaseListener extends ListenerAdapter {
             }
 
             if (!Tama.INSTANCE.getDataBase().hasGuildUser(event.getGuild().getId(), event.getAuthor().getId())) {
-                Tama.INSTANCE.getDataBase().saveGuildUser(event.getGuild().getId(), new GuildUser(event.getAuthor().getId()));
+                Tama.INSTANCE.getDataBase().saveGuildUser(event.getGuild().getId(), new GuildUser(event.getAuthor().getId(), event.getAuthor().getAsMention()));
             }
         });
     }

@@ -5,6 +5,7 @@ import uwu.narumi.tama.user.IUser;
 public class GuildUser implements IUser {
 
     private String id;
+    private String mention;
 
     private int level;
     private int globalExperience;
@@ -15,16 +16,21 @@ public class GuildUser implements IUser {
     private long lastMessageTime = -1;
     private long activeTime = -1;
 
-    public GuildUser() {
+    private GuildUser() {
     }
 
-    public GuildUser(String id) {
+    public GuildUser(String id, String mention) {
         this.id = id;
+        this.mention = mention;
     }
 
     @Override
     public String getId() {
         return id;
+    }
+
+    public String getMention() {
+        return mention;
     }
 
     public int getLevel() {

@@ -19,6 +19,7 @@ public class BotGuild {
     private String language;
     private boolean leveling;
     private boolean proxy;
+    private boolean commandsBlacklist;
 
     private String notificationChannel;
 
@@ -87,5 +88,13 @@ public class BotGuild {
 
     public void setNotificationChannel(String notificationChannel) {
         this.notificationChannel = notificationChannel;
+    }
+
+    public boolean isCommandsBlacklist() {
+        return commandsBlacklist;
+    }
+
+    public void setCommandsBlacklist(boolean commandsBlacklist) {
+        this.commandsBlacklist = commandsBlacklist;
     }
 }

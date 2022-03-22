@@ -1,7 +1,6 @@
 package uwu.narumi.tama.helper.discord;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -168,7 +167,7 @@ public final class EmbedHelper {
     /*
         TODO: Recode
      */
-    public static MessageEmbed levelTop(List<GuildUser> users, User user, Guild guild, int max) {
+    public static MessageEmbed levelTop(List<GuildUser> users, User user, int max) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setAuthor("Guild Score Leaderboards!")
                 .setTitle("Active Score")
@@ -185,7 +184,7 @@ public final class EmbedHelper {
                     added = isInvoker;
 
                 String base = isInvoker ? "**#%s |** %s **XP:** `%s`\n" : "#%s | %s XP: `%s`\n";
-                embedBuilder.appendDescription(String.format(base, i + 1, guild.retrieveMemberById(guildUser.getId()).complete().getUser().getAsMention(), guildUser.getGlobalExperience()));
+                embedBuilder.appendDescription(String.format(base, i + 1, guildUser.getMention(), guildUser.getGlobalExperience()));
             } else if (added)
                 break;
 
