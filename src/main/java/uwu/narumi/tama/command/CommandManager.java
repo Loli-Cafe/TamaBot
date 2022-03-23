@@ -7,10 +7,7 @@ import uwu.narumi.tama.helper.ExceptionHelper;
 import uwu.narumi.tama.helper.discord.EmbedHelper;
 import uwu.narumi.tama.helper.network.BinHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class CommandManager {
@@ -31,10 +28,21 @@ public class CommandManager {
         String[] args = message.split(" ");
         findCommand(args[0]).ifPresentOrElse(command -> {
             try {
-                if (args.length - 1 < command.getArgsLength())
-                    throw new CommandException("Usage: " + command.getUsage());
+                Tama.INSTANCE.getGuildManager().findGuild(Objects.requireNonNull(event.getGuild()).getId()).thenAccept(guild -> {
+                    if (guild.isCommandsBlacklist()
+                            && !guild.getBlacklistedCommandsChannels().isEmpty()
+                            && guild.getBlacklistedCommandsChannels().containsKey(command.getType())
+                            && !guild.getBlacklistedCommandsChannels().get(command.getType()).isEmpty()
+                            && guild.getBlacklistedCommandsChannels().get(command.getType()).contains(event.getTextChannel().getId())
+                    ) {
+                        return;
+                    }
 
-                command.compose(event, Arrays.copyOfRange(args, 1, args.length));
+                    if (args.length - 1 < command.getArgsLength())
+                        throw new CommandException("Usage: " + command.getUsage());
+
+                    command.compose(event, Arrays.copyOfRange(args, 1, args.length));
+                });
             } catch (Exception e) {
                 handleException(event, e);
             }
@@ -44,10 +52,22 @@ public class CommandManager {
     public void handle(SlashCommandInteractionEvent event) {
         findCommand(event.getName()).ifPresentOrElse(command -> {
             try {
-                if (event.getOptions().size() < command.getArgsLength())
-                    throw new CommandException("Usage: " + command.getUsage());
+                Tama.INSTANCE.getGuildManager().findGuild(Objects.requireNonNull(event.getGuild()).getId()).thenAccept(guild -> {
+                    if (guild.isCommandsBlacklist()
+                            && (!guild.getBlacklistedCommandsChannels().isEmpty()
+                            && guild.getBlacklistedCommandsChannels().containsKey(command.getType())
+                            && !guild.getBlacklistedCommandsChannels().get(command.getType()).isEmpty()
+                            && guild.getBlacklistedCommandsChannels().get(command.getType()).contains(event.getTextChannel().getId())
+                    )) {
+                        event.reply("").complete().deleteOriginal().queue();
+                        return;
+                    }
 
-                command.compose(event);
+                    if (event.getOptions().size() < command.getArgsLength())
+                        throw new CommandException("Usage: " + command.getUsage());
+
+                    command.compose(event);
+                });
             } catch (Exception e) {
                 handleException(event, e);
             }

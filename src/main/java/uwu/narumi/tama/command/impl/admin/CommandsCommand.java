@@ -14,18 +14,21 @@ import uwu.narumi.tama.command.CommandInfo;
 import uwu.narumi.tama.command.CommandType;
 import uwu.narumi.tama.helper.discord.EmbedHelper;
 
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 
 @CommandInfo(
         alias = "commands",
         description = "Enables/Disabled commands blacklist | Manages commands channels whitelist",
-        usage = "/commands [channel]",
+        usage = "/commands [type] [channel]",
         type = CommandType.ADMIN
 )
 public class CommandsCommand extends Command {
 
     public CommandsCommand() {
         super(
+                new OptionData(OptionType.STRING, "command_type", "Command type", false, false),
                 new OptionData(OptionType.CHANNEL, "channel", "kurwa no nei wiem", false, false)
         );
     }
@@ -43,18 +46,19 @@ public class CommandsCommand extends Command {
                 handleException(event, new CommandException("Can't fetch guild"));
 
             if (args.length > 0) {
+                CommandType commandType = CommandType.valueOf(args[0].toUpperCase(Locale.ROOT));
                 TextChannel textChannel;
                 if (!event.getMessage().getMentionedChannels().isEmpty())
                     textChannel = event.getMessage().getMentionedChannels().get(0);
                 else
                     textChannel = event.getTextChannel();
 
-                if (guild.getWhitelistedCommandsChannels().contains(textChannel.getId())) {
-                    guild.getWhitelistedCommandsChannels().remove(textChannel.getId());
-                    event.getTextChannel().sendMessageEmbeds(EmbedHelper.success(String.format("Commands on %s are now %s", textChannel.getAsMention(), "enabled"))).queue();
+                if (guild.getBlacklistedCommandsChannels().containsKey(commandType) && guild.getBlacklistedCommandsChannels().get(commandType).contains(textChannel.getId())) {
+                    guild.getBlacklistedCommandsChannels().computeIfAbsent(commandType, ignored -> new HashSet<>()).remove(textChannel.getId());
+                    event.getTextChannel().sendMessageEmbeds(EmbedHelper.success(String.format("%s commands on %s are now %s", commandType.name(), textChannel.getAsMention(), "enabled"))).queue();
                 } else {
-                    guild.getWhitelistedCommandsChannels().add(textChannel.getId());
-                    event.getTextChannel().sendMessageEmbeds(EmbedHelper.success(String.format("Commands on %s are now %s", textChannel.getAsMention(), "enabled"))).queue();
+                    guild.getBlacklistedCommandsChannels().computeIfAbsent(commandType, ignored -> new HashSet<>()).add(textChannel.getId());
+                    event.getTextChannel().sendMessageEmbeds(EmbedHelper.success(String.format("%s commands on %s are now %s", commandType.name(), textChannel.getAsMention(), "disabled"))).queue();
                 }
             } else {
                 guild.setCommandsBlacklist(!guild.isCommandsBlacklist());
@@ -71,15 +75,17 @@ public class CommandsCommand extends Command {
             if (guild == null)
                 handleException(event, new CommandException("Can't fetch guild"));
 
-            OptionMapping optionMapping = event.getOption("channel");
-            if (optionMapping != null) {
-                TextChannel textChannel = optionMapping.getAsTextChannel();
-                if (guild.getWhitelistedCommandsChannels().contains(textChannel.getId())) {
-                    guild.getWhitelistedCommandsChannels().remove(textChannel.getId());
-                    event.replyEmbeds(EmbedHelper.success(String.format("Commands on %s are now %s", textChannel.getAsMention(), "enabled"))).queue();
+            OptionMapping channel = event.getOption("channel");
+            OptionMapping commandTypeString = event.getOption("command type");
+            if (channel != null && commandTypeString != null) {
+                CommandType commandType = CommandType.valueOf(commandTypeString.getAsString().toUpperCase(Locale.ROOT));
+                TextChannel textChannel = channel.getAsTextChannel();
+                if (guild.getBlacklistedCommandsChannels().containsKey(commandType) && guild.getBlacklistedCommandsChannels().get(commandType).contains(textChannel.getId())) {
+                    guild.getBlacklistedCommandsChannels().computeIfAbsent(commandType, ignored -> new HashSet<>()).remove(textChannel.getId());
+                    event.replyEmbeds(EmbedHelper.success(String.format("%s commands on %s are now %s", commandType.name(), textChannel.getAsMention(), "enabled"))).queue();
                 } else {
-                    guild.getWhitelistedCommandsChannels().add(textChannel.getId());
-                    event.replyEmbeds(EmbedHelper.success(String.format("Commands on %s are now %s", textChannel.getAsMention(), "enabled"))).queue();
+                    guild.getBlacklistedCommandsChannels().computeIfAbsent(commandType, ignored -> new HashSet<>()).add(textChannel.getId());
+                    event.replyEmbeds(EmbedHelper.success(String.format("%s commands on %s are now %s", commandType.name(), textChannel.getAsMention(), "disabled"))).queue();
                 }
             } else {
                 guild.setCommandsBlacklist(!guild.isCommandsBlacklist());

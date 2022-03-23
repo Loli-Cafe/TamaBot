@@ -10,7 +10,6 @@ import uwu.narumi.tama.command.impl.admin.*;
 import uwu.narumi.tama.command.impl.anime.*;
 import uwu.narumi.tama.command.impl.nsfw.*;
 import uwu.narumi.tama.command.impl.nsfw.rp.*;
-import uwu.narumi.tama.command.impl.user.HelpCommand;
 import uwu.narumi.tama.command.impl.user.InviteCommand;
 import uwu.narumi.tama.command.impl.user.LevelCommand;
 import uwu.narumi.tama.command.impl.user.TopCommand;
@@ -142,7 +141,7 @@ public enum Tama {
                     new SafebooruCommand(),
                     new YandereCommand(),
 
-                    new HelpCommand(),
+                    //new HelpCommand(),
                     new InviteCommand(),
                     new LevelCommand(),
                     new TopCommand(),

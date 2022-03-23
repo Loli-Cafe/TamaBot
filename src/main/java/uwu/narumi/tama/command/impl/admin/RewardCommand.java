@@ -72,7 +72,7 @@ public class RewardCommand extends Command {
             Role role = Objects.requireNonNull(event.getOption("role")).getAsRole();
 
             guild.getLevelRewards().put(level, role.getId());
-            event.getTextChannel().sendMessageEmbeds(
+            event.replyEmbeds(
                     EmbedHelper.success(String.format("Role reward for level %s is now %s", level, role.getAsMention()))).queue();
         });
     }

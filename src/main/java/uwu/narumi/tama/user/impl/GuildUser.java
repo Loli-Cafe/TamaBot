@@ -15,6 +15,7 @@ public class GuildUser implements IUser {
 
     private long lastMessageTime = -1;
     private long activeTime = -1;
+    private long lastExperienceTime = -1;
 
     private GuildUser() {
     }
@@ -87,5 +88,13 @@ public class GuildUser implements IUser {
 
     public void setActiveTime(long activeTime) {
         this.activeTime = activeTime;
+    }
+
+    public long getLastExperienceTime() {
+        return lastExperienceTime;
+    }
+
+    public void setLastExperienceTime(long lastExperienceTime) {
+        this.lastExperienceTime = lastExperienceTime;
     }
 }

@@ -18,9 +18,6 @@ public class CommandListener extends ListenerAdapter {
             return;
 
         Tama.INSTANCE.getGuildManager().findGuild(Objects.requireNonNull(event.getGuild()).getId()).thenAccept(guild -> {
-            if (guild.isCommandsBlacklist() && !guild.getWhitelistedCommandsChannels().isEmpty() && !guild.getWhitelistedCommandsChannels().contains(event.getChannel().getId()))
-                return;
-
             if (event.getMessage().getContentDisplay().startsWith(guild.getPrefix())) {
                 ExecutorHelper.execute(() -> {
                     Tama.INSTANCE.getCommandManager().handle(guild.getPrefix(), event);
@@ -32,13 +29,6 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        Tama.INSTANCE.getGuildManager().findGuild(Objects.requireNonNull(event.getGuild()).getId()).thenAccept(guild -> {
-            if (guild.isCommandsBlacklist() && !guild.getWhitelistedCommandsChannels().isEmpty() && !guild.getWhitelistedCommandsChannels().contains(event.getChannel().getId())) {
-                event.reply("").complete().deleteOriginal().queue();
-                return;
-            }
-
-            ExecutorHelper.execute(() -> Tama.INSTANCE.getCommandManager().handle(event));
-        });
+        ExecutorHelper.execute(() -> Tama.INSTANCE.getCommandManager().handle(event));
     }
 }

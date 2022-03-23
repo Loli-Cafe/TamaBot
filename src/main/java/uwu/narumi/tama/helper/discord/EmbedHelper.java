@@ -72,9 +72,6 @@ public final class EmbedHelper {
             if (command.getAliases() != null && command.getAliases().length > 0)
                 commandInfo.append(String.format("*├*Aliases: `%s`", String.join(", ", command.getAliases()))).append("\n");
 
-            if (!command.getUsage().isEmpty())
-                commandInfo.append(String.format("*├*Usage: `%s`", command.getUsage())).append("\n");
-
             if (!command.getDescription().isEmpty())
                 commandInfo.append(String.format("*├*Description: `%s`", command.getDescription())).append("\n");
 
@@ -147,7 +144,11 @@ public final class EmbedHelper {
         return new EmbedBuilder()
                 .setColor(PINK_COLOR)
                 .setAuthor("Congratulations!" + PARTY, user.getAvatarUrl(), user.getAvatarUrl())
-                .setDescription(String.format("%s, you've reached level %s and got %s role!", user.getAsMention(), level, role.getAsMention()))
+                .setDescription(String.format("%s, you've reached level %s and got %s",
+                        user.getAsMention(),
+                        level,
+                        (role == null ? "nothing" : String.format("%s role!", role.getAsMention()))
+                ))
                 .build();
     }
 

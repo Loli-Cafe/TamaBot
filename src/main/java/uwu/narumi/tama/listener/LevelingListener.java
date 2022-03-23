@@ -22,6 +22,9 @@ public class LevelingListener extends ListenerAdapter {
             if (!guild.isLeveling())
                 return;
 
+            if (event.getMessage().getContentDisplay().startsWith(guild.getPrefix()))
+                return;
+
             if (guild.getBlacklistedLevelingChannels().contains(event.getTextChannel().getId()))
                 return;
 
@@ -30,43 +33,37 @@ public class LevelingListener extends ListenerAdapter {
                 if (user == null)
                     return;
 
-                if (user.getLastMessageTime() != -1 && (System.currentTimeMillis() - user.getLastMessageTime() < 1000)) {
-                    user.setExperience(user.getExperience() - 5);
-                    return;
-                }
-
                 if (System.currentTimeMillis() - user.getLastMessageTime() > TimeUnit.MINUTES.toMillis(10))
                     user.setActiveTime(-1);
 
                 if (user.getMessages() > 2 && user.getActiveTime() == -1)
                     user.setActiveTime(System.currentTimeMillis());
 
-                if (System.currentTimeMillis() - user.getActiveTime() > TimeUnit.MINUTES.toMinutes(1)) {
+                if (System.currentTimeMillis() - user.getActiveTime() > TimeUnit.MINUTES.toMillis(1)) {
                     int exp = 0;
 
-                    exp += Math.min((event.getMessage().getContentDisplay().length() % 5) - 1, 50);
-                    exp += event.getMessage().getAttachments().isEmpty() ? 0 : 10;
-                    exp += Math.min(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - user.getActiveTime()) % 10, 50);
+                    exp += event.getMessage().getAttachments().size() * 5;
+                    if (user.getLastExperienceTime() + TimeUnit.SECONDS.toMillis(24) <= System.currentTimeMillis()) {
+                        exp += Math.min((event.getMessage().getContentDisplay().length() % 12) - 1, 50);
+                        exp += Math.min(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - user.getActiveTime()) % 12, 50);
+                        user.setLastExperienceTime(System.currentTimeMillis());
+                    }
 
                     user.setExperience(user.getExperience() + exp);
                     user.setGlobalExperience(user.getGlobalExperience() + exp);
                     if (user.getExperience() >= user.getExperienceBarrier()) {
                         user.setLevel(user.getLevel() + 1);
-                        user.setExperienceBarrier(user.getLevel() * 100);
+                        user.setExperienceBarrier(user.getLevel() * 75);
                         user.setExperience(0);
 
-                        Role role = event.getGuild().getRoleById(guild.getLevelRewards().get(user.getLevel()));
+                        Role role = guild.getLevelRewards().containsKey(user.getLevel()) ? event.getGuild().getRoleById(guild.getLevelRewards().get(user.getLevel())) : null;
+
                         TextChannel notificationChannel = event.getGuild().getTextChannelById(guild.getNotificationChannel());
-                        if (notificationChannel == null)
-                            return;
+                        if (role != null)
+                            event.getGuild().addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
 
-                        if (role == null) {
-                            notificationChannel.sendMessageEmbeds(EmbedHelper.error("Role doesn't exists")).queue();
-                            return;
-                        }
-
-                        event.getGuild().addRoleToMember(Objects.requireNonNull(event.getMember()), role).queue();
-                        notificationChannel.sendMessageEmbeds(EmbedHelper.levelGained(event.getAuthor(), user.getLevel(), role)).queue();
+                        if (notificationChannel != null)
+                            notificationChannel.sendMessageEmbeds(EmbedHelper.levelGained(event.getAuthor(), user.getLevel(), role)).queue();
                     }
                 }
 

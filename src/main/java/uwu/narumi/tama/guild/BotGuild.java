@@ -1,6 +1,8 @@
 package uwu.narumi.tama.guild;
 
 
+import uwu.narumi.tama.command.CommandType;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -8,7 +10,7 @@ import java.util.Set;
 
 public class BotGuild {
 
-    private final Set<String> whitelistedCommandsChannels = new HashSet<>();
+    private final Map<CommandType, Set<String>> blacklistedCommandsChannels = new HashMap<>();
     private final Set<String> whitelistedProxyChannels = new HashSet<>();
     private final Set<String> blacklistedLevelingChannels = new HashSet<>();
 
@@ -30,8 +32,8 @@ public class BotGuild {
         this.id = id;
     }
 
-    public Set<String> getWhitelistedCommandsChannels() {
-        return whitelistedCommandsChannels;
+    public Map<CommandType, Set<String>> getBlacklistedCommandsChannels() {
+        return blacklistedCommandsChannels;
     }
 
     public Set<String> getWhitelistedProxyChannels() {

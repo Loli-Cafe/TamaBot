@@ -50,7 +50,7 @@ public class TopCommand extends Command {
             users.sort(Comparator.comparingInt(GuildUser::getGlobalExperience).reversed());
 
             if (users.isEmpty()) {
-                event.getChannel().sendMessageEmbeds(EmbedHelper.error("No active users")).queue();
+                event.replyEmbeds(EmbedHelper.error("No active users")).queue();
                 return;
             }
 

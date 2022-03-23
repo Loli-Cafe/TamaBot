@@ -2,6 +2,7 @@ package uwu.narumi.tama.command.impl.user;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -29,16 +30,18 @@ public class LevelCommand extends Command {
 
     @Override
     public void compose(MessageReceivedEvent event, String... args) {
-        Tama.INSTANCE.getUserManager().findGuildUser(event.getGuild().getId(), event.getMessage().getMentionedUsers().isEmpty() ? event.getAuthor().getId() : event.getMessage().getMentionedUsers().get(0).getId()).thenAccept(user -> {
-            event.getTextChannel().sendMessageEmbeds(EmbedHelper.levelInfo(event.getAuthor(), user)).queue();
+        User dcUser = event.getMessage().getMentionedUsers().isEmpty() ? event.getAuthor() : event.getMessage().getMentionedUsers().get(0);
+        Tama.INSTANCE.getUserManager().findGuildUser(event.getGuild().getId(), dcUser.getId()).thenAccept(user -> {
+            event.getTextChannel().sendMessageEmbeds(EmbedHelper.levelInfo(dcUser, user)).queue();
         });
     }
 
     @Override
     public void compose(SlashCommandInteractionEvent event) {
         OptionMapping optionMapping = event.getOption("user");
-        Tama.INSTANCE.getUserManager().findGuildUser(event.getGuild().getId(), optionMapping != null ? optionMapping.getAsUser().getId() : event.getUser().getId()).thenAccept(user -> {
-            event.getTextChannel().sendMessageEmbeds(EmbedHelper.levelInfo(event.getUser(), user)).queue();
+        User dcUser = optionMapping != null ? optionMapping.getAsUser() : event.getUser();
+        Tama.INSTANCE.getUserManager().findGuildUser(event.getGuild().getId(), dcUser.getId()).thenAccept(user -> {
+            event.replyEmbeds(EmbedHelper.levelInfo(dcUser, user)).queue();
         });
     }
 
